@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<head>
+                        <meta charset="UTF-8">
+                        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+                        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+                        <title>مكتبة كتب</title>
+</head>
+<body class="container bg-light">
+                        <h1 class="mt-5 text-secondary ">مكتبتي الشخصية</h1>
+                        <div class="form-group mt-5 ">
+                                                <label for="bookTitle" >عنوان الكتاب </label>
+                                                <input type="text" id="bookTitle">
+                        </div>
+
+                        <div class="form-group">
+                                                <label for="readingTime">وقت القراءة </label>
+                                                <input type="number" id="readingTime" min="1">
+                        </div>
+
+                        <button onclick="addBook()" class="btn btn-secondary mt-5">اضف كتاباً</button>
+                        <h2 class="mt-5 text-secondary">قائمة الكتب</h2>
+                        <ul id="bookList" class="list-group"></ul>
+
+                        <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+
+                        <script>
+                                                // قائمة لتخزين الكتب
+                                                const books = [];
+                                              
+                                                // دالة لإضافة كتاب إلى القائمة
+                                                function addBook() {
+                                                  const bookTitle = document.getElementById('bookTitle').value;
+                                                  const readingTime = parseInt(document.getElementById('readingTime').value);
+                                              
+                                                  // التحقق من أن تم إدخال قيم صالحة
+                                                  if (!bookTitle || isNaN(readingTime) || readingTime <= 0) {
+                                                    alert('الرجاء إدخال معلومات صحيحة.');
+                                                    return;
+                                                  }
+                                              
+                                                  // إضافة الكتاب إلى القائمة
+                                                  books.push({
+                                                    title: bookTitle,
+                                                    time: readingTime,
+                                                  });
+                                              
+                                                  // عرض الكتب في القائمة
+                                                  displayBooks();
+                                              
+                                                  // إعادة تعيين الحقول
+                                                  document.getElementById('bookTitle').value = '';
+                                                  document.getElementById('readingTime').value = '';
+                                                }
+                                              
+                                                // دالة لعرض الكتب في القائمة
+                                                function displayBooks() {
+                                                  const bookList = document.getElementById('bookList');
+                                                  bookList.innerHTML = '';
+                                              
+                                                  books.forEach((book, index) => {
+                                                    const listItem = document.createElement('li');
+                                                    listItem.textContent = `${book.title} - ${book.time} دقيقة`;
+                                              
+                                                    // إضافة زر للبدء في القراءة
+                                                    const readButton = document.createElement('button');
+                                                    readButton.textContent = 'ابدأ القراءة';
+                                                    readButton.addEventListener('click', () => startReading(index));
+                                              
+                                                    listItem.appendChild(readButton);
+                                                    bookList.appendChild(listItem);
+                                                  });
+                                                }
+                                              
+                                                // دالة لبدء القراءة
+                                                function startReading(index) {
+                                                  const book = books[index];
+                                                  alert(`ابدأ في قراءة ${book.title} لمدة ${book.time} دقيقة.`);
+                                                }
+                                                function updateTimer(timeRemaining, index) {
+    const minutes = Math.floor(timeRemaining / 60);
+    const seconds = timeRemaining % 60;
+    const formattedTime = `${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
+    document.getElementById('timer').innerText = formattedTime;
+
+    if (timeRemaining <= 0) {
+      clearInterval(timerInterval);
+      startReading(index);  // تنفيذ الدالة عند انتهاء الوقت
+    }
+  }
+
+  function startReadingTimer(index) {
+    const book = books[index];
+    let timeRemaining = book.time * 60; // تحويل الدقائق إلى ثواني
+    updateTimer(timeRemaining, index);
+
+    const timerInterval = setInterval(() => {
+      timeRemaining--;
+
+      if (timeRemaining <= 0) {
+        clearInterval(timerInterval);
+      }
+
+      updateTimer(timeRemaining, index);
+    }, 1000);
+  }
+                                              </script>
+</body>
